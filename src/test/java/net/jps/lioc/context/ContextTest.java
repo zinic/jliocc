@@ -14,10 +14,16 @@
  */
 package net.jps.lioc.context;
 
+import java.util.Stack;
+import net.jps.lioc.context.resolution.ContextResolutionException;
 import net.jps.lioc.ContextBuilder;
+import net.jps.lioc.ContextReferenceNotFoundException;
 import net.jps.lioc.ContextRegistry;
 import net.jps.lioc.IContextRegistry;
+import net.jps.lioc.context.resolution.CircularDependencyResolutionException;
 import net.jps.lioc.context.support.ExtendedTestObject;
+import net.jps.lioc.context.support.ObjectThatThrowsExceptions;
+import net.jps.lioc.context.support.ObjectWhichRequiresItself;
 import net.jps.lioc.context.support.ObjectWithoutConstructors;
 import net.jps.lioc.context.support.SuperTestObject;
 import net.jps.lioc.context.support.SimpleTestObject;
@@ -34,7 +40,41 @@ import static org.junit.Assert.*;
 @RunWith(Enclosed.class)
 public class ContextTest {
 
-    public static class WhenRegisteringContexts {
+    public static class WhenSearchingContexts {
+
+        @Test(expected = ContextReferenceNotFoundException.class)
+        public void shouldNotUseEmptyContextLibraryForAliasSearches() {
+            new ContextRegistry().getByAlias("Bam!");
+        }
+
+        @Test(expected = ContextReferenceNotFoundException.class)
+        public void shouldNotUseEmptyContextLibraryForClassSearches() {
+            new ContextRegistry().getByClass(Object.class);
+        }
+
+        @Test
+        public void shouldFindObjectsFromMultipleContexts() {
+            final IContextRegistry appContext = new ContextRegistry();
+
+            appContext.use(
+                    new ContextBuilder("A Context") {
+
+                        {
+                            register(SimpleTestObject.class).as("test");
+                        }
+                    },
+                    new ContextBuilder() {
+
+                        {
+                            register(SimpleTestObject.class).as("ref");
+                        }
+                    });
+
+            assertNotNull(appContext.getByAlias("ref"));
+        }
+    }
+
+    public static class WhenDoingSimpleRegistrations {
 
         @Test(expected = ContextResolutionException.class)
         public void shouldDetectUnconstructableClasses() {
@@ -48,6 +88,20 @@ public class ContextTest {
             });
 
             appContext.getByClass(ObjectWithoutConstructors.class);
+        }
+
+        @Test(expected = ContextResolutionException.class)
+        public void shouldThrowUpExceptionsThrownDuringDependencyConstruction() {
+            final IContextRegistry appContext = new ContextRegistry();
+
+            appContext.use(new ContextBuilder() {
+
+                {
+                    register(ObjectThatThrowsExceptions.class);
+                }
+            });
+
+            appContext.getByClass(ObjectThatThrowsExceptions.class);
         }
 
         @Test
@@ -79,27 +133,6 @@ public class ContextTest {
         }
 
         @Test
-        public void shouldFindObjectsFromMultipleContexts() {
-            final IContextRegistry appContext = new ContextRegistry();
-
-            appContext.use(
-                    new ContextBuilder("A Context") {
-
-                        {
-                            register(SimpleTestObject.class).as("test");
-                        }
-                    },
-                    new ContextBuilder() {
-
-                        {
-                            register(SimpleTestObject.class).as("ref");
-                        }
-                    });
-
-            assertNotNull(appContext.getByAlias("ref"));
-        }
-
-        @Test
         public void shouldRegisterObjects() {
             final IContextRegistry appContext = new ContextRegistry();
             final SimpleTestObject test = new SimpleTestObject();
@@ -112,6 +145,34 @@ public class ContextTest {
             });
 
             assertNotNull(appContext.getByClass(SimpleTestObject.class));
+        }
+    }
+
+    public static class WhenFindingCircularDependencies {
+
+        @Test(expected = CircularDependencyResolutionException.class)
+        public void shouldDetectCircularClassDependencies() {
+            final IContextRegistry appContext = new ContextRegistry();
+
+            appContext.use(new ContextBuilder() {
+
+                {
+                    register(ObjectWhichRequiresItself.class).as("Circular");
+                }
+            });
+
+            appContext.getByAlias("Circular");
+        }
+
+        @Test
+        public void shouldFormatDependencyStack() {
+            final Stack classDepStack = new Stack<Class>();
+            classDepStack.push(Object.class);
+
+            final String formattedOutput = new CircularDependencyResolutionException("Testing", classDepStack).toString();
+
+            assertTrue(formattedOutput.equals("Resolution stack trace...\n\tDependency: java.lang.Object"));
+
         }
     }
 

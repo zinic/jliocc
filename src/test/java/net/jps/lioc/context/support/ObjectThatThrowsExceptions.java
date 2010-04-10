@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package net.jps.lioc.context.support;
 
@@ -19,25 +18,9 @@ package net.jps.lioc.context.support;
  *
  * @author zinic
  */
-public class SuperTestObject {
+public class ObjectThatThrowsExceptions {
 
-    private ExtendedTestObject extendedDependency;
-    private SimpleTestObject dependency;
-
-    public SuperTestObject(ExtendedTestObject extendedDependency, SimpleTestObject dependency) {
-        this.extendedDependency = extendedDependency;
-        this.dependency = dependency;
-    }
-
-    public SuperTestObject(ExtendedTestObject extendedDependency) {
-        this.extendedDependency = extendedDependency;
-    }
-
-    public SimpleTestObject getDependency() {
-        return dependency;
-    }
-
-    public ExtendedTestObject getExtendedDependency() {
-        return extendedDependency;
+    public ObjectThatThrowsExceptions() throws Exception {
+        throw new Exception("Failed");
     }
 }

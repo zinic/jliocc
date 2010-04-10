@@ -12,14 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.jps.lioc.context;
 
+import net.jps.lioc.context.resolution.ResolutionResult;
 import java.util.HashMap;
 import java.util.Map;
 import net.jps.util.Is;
 
 import net.jps.util.Join;
+
+import static net.jps.lioc.context.resolution.ContextResolutionHandler.resolveReferenceFromContext;
 
 /**
  *
@@ -71,7 +73,7 @@ public class Context implements IContext {
     }
 
     private Object resolveClass(IContextReference alias, Class classToResolve) {
-        ResolutionResult resolutionResult = Resolver.resolveReferenceFromContext(this, alias, classToResolve);
+        ResolutionResult resolutionResult = resolveReferenceFromContext(this, alias, classToResolve);
 
         synchronized (instsanceCache) {
             instsanceCache.put(alias, resolutionResult.getResolutionResult());
