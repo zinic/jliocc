@@ -12,11 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.jps.lioc.context;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Comparator;
 import net.jps.util.Join;
 
 /**
@@ -50,7 +51,31 @@ public class Resolver implements ResolutionResult {
             throw new ContextResolutionException("No constructors available for instanstation");
         }
 
-        return resolveFromConstructor(getConstructor(constructors));
+        Arrays.sort(constructors, new Comparator<Constructor>() {
+
+            /**
+             * This comparator is designed to put the most greedy constructors
+             * first for resolution
+             *
+             * TODO: Externalize this
+             */
+            public int compare(Constructor o1, Constructor o2) {
+                return o2.getParameterTypes().length - o1.getParameterTypes().length;
+            }
+        });
+
+        for (Constructor constructor : constructors) {
+            final Object ref = resolveFromConstructor(constructor);
+
+            if (ref != null) {
+                return ref;
+            }
+        }
+
+        throw new ContextResolutionException(
+                Join.strings("Unable to locate required construction dependencies for class '",
+                constructors[0].getDeclaringClass().getCanonicalName(),
+                "'"));
     }
 
     private Object resolveFromConstructor(Constructor constructor) {
@@ -61,10 +86,7 @@ public class Resolver implements ResolutionResult {
             parameters[index] = contextReference.findByClass(constructorRequirements[index]);
 
             if (parameters[index] == null) {
-                throw new ContextResolutionException(
-                        Join.strings("Unable to locate required class dependency for class '",
-                        constructorRequirements[index].getCanonicalName(),
-                        "'"));
+                return null;
             }
         }
 
@@ -97,17 +119,5 @@ public class Resolver implements ResolutionResult {
                     invocationTargetException.getMessage()),
                     invocationTargetException);
         }
-    }
-
-    private Constructor getConstructor(Constructor[] constructors) {
-        Constructor current = constructors[0];
-
-        for (int i = 1; i < constructors.length; i++) {
-            if (constructors[i].getParameterTypes().length > current.getParameterTypes().length) {
-                current = constructors[i];
-            }
-        }
-
-        return current;
     }
 }
