@@ -1,0 +1,2 @@
+This is an experimental Java IOC Container that uses a declarative style approach
+to context registration. It has basic dependency auto-wiring.
