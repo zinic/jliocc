@@ -12,12 +12,12 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-
 package net.jps.lioc;
 
 import net.jps.lioc.context.Context;
 import net.jps.lioc.context.ContextReferenceAliaser;
 import net.jps.lioc.context.IContext;
+import net.jps.lioc.context.interceptor.InterceptorStub;
 
 /**
  *
@@ -36,11 +36,19 @@ public abstract class ContextBuilder {
         context.setContextAlias(alias);
     }
 
-    public void contextAlias(String alias) {
-        context.setContextAlias(alias);
-    }
-
+    /**
+     * Registers a given Object into the context. If this is a class it will
+     * register the Object as a class, otherwise it will be directly input
+     * into the dependency tree management set.
+     *
+     * @param thingToRegister
+     * @return
+     */
     public ContextReferenceAliaser register(Object thingToRegister) {
         return context.register(thingToRegister);
+    }
+
+    public InterceptorStub intercept(String regex) {
+        return context.intercept(regex);
     }
 }

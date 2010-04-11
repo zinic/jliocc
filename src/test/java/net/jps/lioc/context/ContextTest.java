@@ -78,6 +78,20 @@ public class ContextTest {
     public static class WhenDoingSimpleRegistrations {
 
         @Test(expected = ContextResolutionException.class)
+        public void shouldDetectUnresolvableClassDependencies() {
+            final IContextRegistry appContext = new ContextRegistry();
+
+            appContext.use(new ContextBuilder() {
+
+                {
+                    register(SuperTestObject.class).as("Super");
+                }
+            });
+
+            appContext.getByAlias("Super");
+        }
+
+        @Test(expected = ContextResolutionException.class)
         public void shouldDetectUnconstructableClasses() {
             final IContextRegistry appContext = new ContextRegistry();
 
@@ -177,21 +191,7 @@ public class ContextTest {
         }
     }
 
-    public static class WhenRegisteringDependencies {
-
-        @Test(expected = ContextResolutionException.class)
-        public void shouldDetectUnresolvableClassDependencies() {
-            final IContextRegistry appContext = new ContextRegistry();
-
-            appContext.use(new ContextBuilder() {
-
-                {
-                    register(SuperTestObject.class).as("Super");
-                }
-            });
-
-            appContext.getByAlias("Super");
-        }
+    public static class WhenRegisteringComplexDependencyGraphs {
 
         @Test
         public void shouldCorrectlyUseLesserConstructorsToResolveClassDependencies() {

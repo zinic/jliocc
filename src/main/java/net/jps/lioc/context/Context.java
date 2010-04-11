@@ -14,6 +14,7 @@
  */
 package net.jps.lioc.context;
 
+import net.jps.lioc.context.interceptor.InterceptorStub;
 import net.jps.lioc.context.resolution.ResolutionResult;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,11 @@ public class Context implements IContext {
         referenceLookaside.put(newReference, thingToRegister);
 
         return newReference;
+    }
+
+    @Override
+    public InterceptorStub intercept(String interceptionRegex) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
