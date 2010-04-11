@@ -18,12 +18,16 @@ package net.jps.lioc.context.interceptor;
  *
  * @author zinic
  */
-public interface InterceptorStub {
+public interface InterceptorPrioritySetter {
 
     /**
-     * Registers a method interceptor
-     * 
-     * @param mi
+     * Use this method to set the interceptor's priority in the context
+     * interceptor chain
+     *
+     * For example, an interceptor with a priority of 100 will be executed over
+     * and interceptor with a priority of 10.
+     *
+     * @param prioirty
      */
-    public InterceptorPrioritySetter with(IMethodInterceptor mi);
+    void priority(int priority);
 }

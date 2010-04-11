@@ -38,7 +38,8 @@ public class InterceptorTest {
 
     public static class WhenUsingInterceptors {
 
-        @Test @Ignore
+        @Test
+        @Ignore
         public void shouldAcceptRegexMatchers() {
             final IContextRegistry appContext = new ContextRegistry();
 
@@ -49,14 +50,39 @@ public class InterceptorTest {
 
                     intercept("*SimpleTestObject.*").with(new IMethodInterceptor() {
 
-                        public int getPriority() {
-                            return 100;
-                        }
-
                         public void called(InterceptorHandler myHandler, Method originMethod, Object[] parameters) {
                             myHandler.willReturn(true);
                         }
                     });
+                }
+            });
+
+            assertTrue(appContext.getByClass(SimpleTestObject.class).returnsFalse());
+        }
+
+        @Test
+        @Ignore
+        public void shouldHonorInterceptorPriority() {
+            final IContextRegistry appContext = new ContextRegistry();
+
+            appContext.use(new ContextBuilder("My First Context") {
+
+                {
+                    register(SimpleTestObject.class);
+
+                    intercept("*SimpleTestObject.*").with(new IMethodInterceptor() {
+
+                        public void called(InterceptorHandler myHandler, Method originMethod, Object[] parameters) {
+                            myHandler.willReturn(false);
+                        }
+                    }).priority(10);
+
+                    intercept("*SimpleTestObject.*").with(new IMethodInterceptor() {
+
+                        public void called(InterceptorHandler myHandler, Method originMethod, Object[] parameters) {
+                            myHandler.willReturn(true);
+                        }
+                    }).priority(100);
                 }
             });
 
