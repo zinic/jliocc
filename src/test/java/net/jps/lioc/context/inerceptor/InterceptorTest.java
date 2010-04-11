@@ -49,6 +49,10 @@ public class InterceptorTest {
 
                     intercept("*SimpleTestObject.*").with(new IMethodInterceptor() {
 
+                        public int getPriority() {
+                            return 100;
+                        }
+
                         public void called(InterceptorHandler myHandler, Method originMethod, Object[] parameters) {
                             myHandler.willReturn(true);
                         }

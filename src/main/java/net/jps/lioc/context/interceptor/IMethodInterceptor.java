@@ -23,6 +23,16 @@ import java.lang.reflect.Method;
 public interface IMethodInterceptor {
 
     /**
+     * Use this method to set interceptor priority in the context interceptor chain
+     * 
+     * For example, an interceptor with a priority of 100 will be executed over
+     * and interceptor with a priority of 10.
+     * 
+     * @return
+     */
+    int getPriority();
+
+    /**
      * Interception method for when a method marked for interception is called
      * 
      * @param originClass
