@@ -9,8 +9,12 @@ package net.jps.lioc.context.interceptor;
  *
  * @author zinic
  */
-public enum Action {
-    Default,
-    Resume,
-    Exit;
+public interface InterceptorHandler {
+
+    void willExitCallChain();
+
+    void willResumeCall();
+
+    void willReturn(Object returningObject);
+
 }

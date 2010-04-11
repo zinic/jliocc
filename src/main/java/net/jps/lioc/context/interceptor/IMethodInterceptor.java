@@ -30,5 +30,5 @@ public interface IMethodInterceptor {
      * @param parameters
      * @return
      */
-    Object called(Class originClass, Method originMethod, Object[] parameters);
+    void called(InterceptorHandler myHandler, Method originMethod, Object[] parameters);
 }

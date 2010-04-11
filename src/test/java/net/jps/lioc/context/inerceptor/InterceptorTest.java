@@ -18,7 +18,8 @@ import java.lang.reflect.Method;
 import net.jps.lioc.ContextBuilder;
 import net.jps.lioc.ContextRegistry;
 import net.jps.lioc.IContextRegistry;
-import net.jps.lioc.context.interceptor.MethodInterceptor;
+import net.jps.lioc.context.interceptor.InterceptorHandler;
+import net.jps.lioc.context.interceptor.IMethodInterceptor;
 import net.jps.lioc.context.support.SimpleTestObject;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -46,18 +47,16 @@ public class InterceptorTest {
                 {
                     register(SimpleTestObject.class);
 
-                    intercept("*SimpleTestObject.*").with(new MethodInterceptor() {
+                    intercept("*SimpleTestObject.*").with(new IMethodInterceptor() {
 
-                        public Object called(Class originClass, Method originMethod, Object[] parameters) {
-                            assertTrue(true);
-                            
-                            return true;
+                        public void called(InterceptorHandler myHandler, Method originMethod, Object[] parameters) {
+                            myHandler.willReturn(true);
                         }
                     });
                 }
             });
 
-            appContext.getByClass(SimpleTestObject.class).methodOne();
+            assertTrue(appContext.getByClass(SimpleTestObject.class).returnsFalse());
         }
     }
 }

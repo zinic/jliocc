@@ -19,5 +19,5 @@ package net.jps.lioc.context.interceptor;
  * @author zinic
  */
 public interface InterceptorStub {
-    public void with(MethodInterceptor mi);
+    public void with(IMethodInterceptor mi);
 }

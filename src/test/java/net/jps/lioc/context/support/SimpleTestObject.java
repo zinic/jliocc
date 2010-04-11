@@ -21,9 +21,11 @@ package net.jps.lioc.context.support;
  */
 public class SimpleTestObject {
 
-    public void methodOne() {
+    public boolean returnsFalse() {
+        return false;
     }
 
-    public void methodTwo() {
+    public boolean returnsTrue() {
+        return true;
     }
 }
