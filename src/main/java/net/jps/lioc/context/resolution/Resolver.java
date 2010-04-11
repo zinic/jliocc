@@ -40,11 +40,11 @@ public class Resolver implements ResolutionResult {
     }
 
     public Resolver resolve(Class type) {
-        resolutionResult = resolveFromConstructors(type.getConstructors());
+        resolutionResult = resolveUsingConstructors(type.getConstructors());
         return this;
     }
 
-    private Object resolveFromConstructors(Constructor[] constructors) {
+    private Object resolveUsingConstructors(Constructor[] constructors) {
         if (constructors == null || constructors.length <= 0) {
             throw new ContextResolutionException("No constructors available for instanstation");
         }
