@@ -21,8 +21,10 @@ import net.jps.lioc.context.IContextReference;
 /**
  *
  * @author zinic
+ *
+ * TODO: Consider refactoring this into something that isn't static. Thread local feels dirty
  */
-public final class ContextResolutionHandler {
+public final class DependencyResolutionHandler {
 
     public static final ResolutionResult resolveReferenceFromContext(IContext context, IContextReference alias, Class type) {
         final Stack<Class> localResolutionStack = resolutionStack.get();
@@ -48,6 +50,6 @@ public final class ContextResolutionHandler {
         }
     };
 
-    private ContextResolutionHandler() {
+    private DependencyResolutionHandler() {
     }
 }

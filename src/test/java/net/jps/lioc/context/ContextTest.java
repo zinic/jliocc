@@ -21,6 +21,7 @@ import net.jps.lioc.ContextReferenceNotFoundException;
 import net.jps.lioc.ContextRegistry;
 import net.jps.lioc.IContextRegistry;
 import net.jps.lioc.context.resolution.CircularDependencyResolutionException;
+import net.jps.lioc.context.resolution.DependencyInstantiationException;
 import net.jps.lioc.context.support.ExtendedTestObject;
 import net.jps.lioc.context.support.ObjectThatThrowsExceptions;
 import net.jps.lioc.context.support.ObjectWhichRequiresItself;
@@ -90,7 +91,7 @@ public class ContextTest {
             appContext.getByClass(ObjectWithoutConstructors.class);
         }
 
-        @Test(expected = ContextResolutionException.class)
+        @Test(expected = DependencyInstantiationException.class)
         public void shouldThrowUpExceptionsThrownDuringDependencyConstruction() {
             final IContextRegistry appContext = new ContextRegistry();
 

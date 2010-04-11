@@ -112,7 +112,7 @@ public class Resolver implements ResolutionResult {
                     instantiationException.getMessage()),
                     instantiationException);
         } catch (InvocationTargetException invocationTargetException) {
-            throw new ContextResolutionException(
+            throw new DependencyInstantiationException(
                     Join.strings("An internal exception has occured in the constructor. Reason: ",
                     invocationTargetException.getCause().getMessage()),
                     invocationTargetException.getCause());

@@ -21,7 +21,7 @@ import net.jps.util.Is;
 
 import net.jps.util.Join;
 
-import static net.jps.lioc.context.resolution.ContextResolutionHandler.resolveReferenceFromContext;
+import static net.jps.lioc.context.resolution.DependencyResolutionHandler.resolveReferenceFromContext;
 
 /**
  *

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.jps.lioc.context.support;
 
 /**
@@ -20,6 +19,7 @@ package net.jps.lioc.context.support;
  * @author zinic
  */
 public class ExtendedTestObject {
+
     private SimpleTestObject dependency;
 
     public ExtendedTestObject() {
