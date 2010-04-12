@@ -14,8 +14,6 @@
  */
 package net.jps.lioc.context.interceptor;
 
-import net.jps.util.Join;
-
 /**
  *
  * @author zinic
@@ -30,24 +28,30 @@ public abstract class InterceptorContext implements InterceptorHandler {
         returnValue = null;
     }
 
-    public void setAction(Action actionToSet) {
+    private void checkState() {
         if (action != Action.Default) {
-            throw new OverloadedInterceptorActionException(Join.strings(
+            throw new OverloadedInterceptorActionException(
                     "Attempting to force an interceptor to perform an action while another action is already set."
-                    + " Current action is: ", action, " - Attempting to overwrite with: ",
-                    actionToSet));
+                    + " Current action is: "
+                    + action);
         }
+
+        if (returnValue != null) {
+            throw new OverloadedInterceptorActionException(
+                    "Attempting to force an interceptor to perform an action while another action is already set."
+                    + " Current action is to return: "
+                    + returnValue);
+        }
+    }
+
+    private void setAction(Action actionToSet) {
+        checkState();
 
         action = actionToSet;
     }
 
     public void willReturn(Object returningObject) {
-        if (returnValue != null) {
-            throw new OverloadedInterceptorActionException(Join.strings(
-                    "Attempting to force an interceptor to perform an action while another action is already set."
-                    + " Current action is to return: ", returnValue, " - Attempting to overwrite with returning: ",
-                    returningObject));
-        }
+        checkState();
 
         this.returnValue = returningObject;
     }

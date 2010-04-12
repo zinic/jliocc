@@ -62,6 +62,29 @@ public class InterceptorTest {
 
         @Test
         @Ignore
+        public void shouldTargetSingleMethods() {
+            final IContextRegistry appContext = new ContextRegistry();
+
+            appContext.use(new ContextBuilder("My First Context") {
+
+                {
+                    register(SimpleTestObject.class);
+
+                    intercept("*SimpleTestObject.returnsFalse()").with(new IMethodInterceptor() {
+
+                        public void called(InterceptorHandler myHandler, Method originMethod, Object[] parameters) {
+                            myHandler.willReturn(true);
+                        }
+                    });
+                }
+            });
+
+            assertTrue(appContext.getByClass(SimpleTestObject.class).returnsTrue());
+            assertTrue(appContext.getByClass(SimpleTestObject.class).returnsFalse());
+        }
+
+        @Test
+        @Ignore
         public void shouldHonorInterceptorPriority() {
             final IContextRegistry appContext = new ContextRegistry();
 
